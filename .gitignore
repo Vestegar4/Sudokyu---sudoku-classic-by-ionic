@@ -68,3 +68,8 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+*.jks
+*.keystore
+suodkyuu-release
+sudokyu-sudoku_classic
+keystore/

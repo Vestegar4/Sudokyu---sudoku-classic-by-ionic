@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.dartd.sudokyu;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.sudokyu.app',
+  appId: 'com.dartd.sudokyu',
   appName: 'Sudo-Kyu',
   webDir: 'www'
 };

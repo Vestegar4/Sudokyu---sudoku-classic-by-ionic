@@ -1,20 +1,29 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="minimal-bg">
+  <div class="home-container">
+    
+    <div class="floating-score" *ngIf="bestScore > 0">
+      <span class="score-label">BEST SCORE</span>
+      <span class="score-value">{{ bestScore }}</span>
+    </div>
+    
+    <div class="brand-section">
+      <h1 class="title">SUDO-<span class="text">KYU</span></h1>
+      <p class="subtitle">Master Your Logic</p>
+    </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <div class="menu-card">
+      <button class="diff-btn btn-easy" routerLink="/game" [queryParams]="{ level: 'Easy' }">
+        EASY
+      </button>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+      <button class="diff-btn btn-medium" routerLink="/game" [queryParams]="{ level: 'Medium' }">
+        MEDIUM
+      </button>
+
+      <button class="diff-btn btn-hard" routerLink="/game" [queryParams]="{ level: 'Hard' }">
+        HARD
+      </button>
+    </div>
+
   </div>
 </ion-content>

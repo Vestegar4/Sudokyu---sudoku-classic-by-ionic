@@ -1,27 +1,111 @@
-#container {
+:host {
+  --c-slate: #344D77;
+  --c-magenta: #C55A82;
+  --c-orange: #FF7241;
+  --bg-main: #FDFBF7;
+}
+.minimal-bg {
+  --background: var(--bg-main);
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: var(--bg-main);
+}
+
+.brand-section {
   text-align: center;
+  margin-bottom: 60px;
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: #3A3535;
+    margin: 0 0 8px 0;
+  }
+  
+  .subtitle {
+    color: #A9B8D4;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+}
+  .text{
+    color: var(--c-orange);
+  }
 
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+  gap: 20px;
+}
+
+.diff-btn {
+ background-color: #ffffff; 
+  border: 2px solid #D5CFC4;
+  border-radius: 16px; 
+  height: 65px;
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  
+  box-shadow: 0 6px 0px rgba(58, 53, 53, 0.15); 
+  
+  transition: all 0.1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.diff-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 0px rgba(58, 53, 53, 0.15);
+}
+
+.btn-easy {
+  color: var(--c-slate); 
+}
+
+.btn-medium {
+  color: var(--c-orange); 
+}
+
+.btn-hard {
+  color: var(--c-magenta); 
+}
+.floating-score {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
+  top: 25px;
+  right: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  
+  background: rgba(255, 255, 255, 0.5);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(58, 53, 53, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
+  .score-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--c-orange);
+    letter-spacing: 1.5px;
+  }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+  .score-value {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--c-ink);
+  }
 }

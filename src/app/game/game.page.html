@@ -1,0 +1,94 @@
+<ion-content [fullscreen]="true" class="minimal-bg">
+  <div class="game-wrapper">
+
+    <div class="top-bar">
+      <button class="minimal-back-btn" (click)="kembaliKeMenu()">
+        ◀ BACK
+      </button>
+      <h2 class="title">SUDO-<span class="text-yellow">KYU</span></h2>
+      <div style="width: 80px;"></div> 
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="label">Mistake</span>
+        <span class="val" [class.danger]="mistakes >= maxMistakes - 1">{{ mistakes }}/{{ maxMistakes }}</span>
+      </div>
+      <div class="stat timer">
+        <span class="val">{{ displayTime }}</span>
+      </div>
+      <div class="stat">
+        <span class="label">Score</span>
+        <span class="val">{{ score | number }}</span>
+      </div>
+    </div>
+
+    <div class="sudoku-board" 
+         (touchstart)="geserJari($event)" 
+         (touchmove)="geserJari($event)">
+         
+      <div 
+        class="sudoku-cell" 
+        *ngFor="let cell of board; let i = index; trackBy: trackByIndex"
+        [attr.data-index]="i" 
+        (click)="pilihKotak(i)" 
+        [class.active]="selectedIndex === i" 
+        [class.related]="isRelated(i) && selectedIndex !== i"
+        [class.matching]="isMatchingNumber(i) && selectedIndex !== i"
+        [class.player-input]="initialBoard[i] === null && board[i] !== null"
+        [class.wrong-answer]="wrongCells.includes(i)"
+        [class.thick-right]="(i + 1) % 3 === 0 && (i + 1) % 9 !== 0"
+        [class.thick-bottom]="i >= 18 && i <= 26 || i >= 45 && i <= 53">
+        
+        <span *ngIf="cell !== null">{{ cell }}</span>
+
+        <div class="notes-grid" *ngIf="cell === null">
+          <div class="note-num" *ngFor="let n of [1,2,3,4,5,6,7,8,9]">
+            {{ notes[i].includes(n) ? n : '' }}
+          </div>
+        </div>
+
+      </div>
+      </div>
+
+    <div class="keypad-container">
+      <div class="keypad-grid">
+        <button class="minimal-btn" *ngFor="let num of [1,2,3,4,5,6,7,8,9]" (click)="isiAngka(num)" [disabled]="mistakes >= maxMistakes">
+          {{ num }}
+        </button>
+      </div>
+      
+      <div class="action-row">
+        <button class="minimal-action-btn" (click)="hapusAngka()" [disabled]="mistakes >= maxMistakes">DEL</button>
+        
+        <button class="minimal-action-btn" (click)="undo()" [disabled]="history.length === 0 || mistakes >= maxMistakes">
+          UNDO
+        </button>
+        
+        <button class="minimal-action-btn btn-note" [class.active-note]="isNoteMode" (click)="toggleNoteMode()" [disabled]="mistakes >= maxMistakes">
+                NOTES: {{ isNoteMode ? 'ON' : 'OFF' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <div class="custom-modal-overlay" *ngIf="showPopup">
+    <div class="custom-modal">
+      <h2 class="modal-title" [ngClass]="popupType === 'kalah' ? 'teks-kalah' : 'teks-menang'">
+        {{ popupTitle }}
+      </h2>
+      <p class="modal-message">{{ popupMessage }}</p>
+
+      <div class="modal-actions">
+        <button class="btn-primary" (click)="aksiPopup('retry')">
+          {{ popupType === 'kalah' ? 'New Game' : 'Play Again' }}
+        </button>
+
+        <button class="btn-secondary" (click)="aksiPopup('home')">
+          Back to Menu
+        </button>
+      </div>
+    </div>
+  </div>
+
+</ion-content> 

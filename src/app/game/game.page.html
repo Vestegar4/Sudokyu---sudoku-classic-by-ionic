@@ -1,4 +1,7 @@
 <ion-content [fullscreen]="true" class="minimal-bg">
+  <div class="custom-notif" [class.show]="showNotif" [ngClass]="notifType">
+    {{ notifMessage }}
+  </div>
   <div class="game-wrapper">
 
     <div class="top-bar">
@@ -61,8 +64,8 @@
       <div class="action-row">
         <button class="minimal-action-btn" (click)="hapusAngka()" [disabled]="mistakes >= maxMistakes">DEL</button>
         
-        <button class="minimal-action-btn" (click)="undo()" [disabled]="history.length === 0 || mistakes >= maxMistakes">
-          UNDO
+        <button class="minimal-action-btn" (click)="undo()" [disabled]="history.length === 0 || mistakes >= maxMistakes || undoQuota <= 0">
+        <span>UNDO </span>
         </button>
         
         <button class="minimal-action-btn btn-note" [class.active-note]="isNoteMode" (click)="toggleNoteMode()" [disabled]="mistakes >= maxMistakes">

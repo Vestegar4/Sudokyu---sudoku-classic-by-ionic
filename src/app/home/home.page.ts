@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonText } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonButton, IonText } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { Platform } from '@ionic/angular/standalone'; 
 import { App } from '@capacitor/app';
@@ -11,7 +11,7 @@ import { App } from '@capacitor/app';
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [CommonModule, IonHeader, IonToolbar, 
-  IonTitle, IonContent, IonText, IonButton, IonGrid, IonRow, IonCol, RouterLink, IonIcon],
+  IonTitle, IonContent, IonText, IonButton, IonGrid, IonRow, IonCol, RouterLink],
 })
 export class HomePage {
 

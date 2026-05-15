@@ -4,6 +4,9 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, I
 import { AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomePage } from '../home/home.page';
+import {Platform, NavController} from '@ionic/angular';
+import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-game',
@@ -36,8 +39,16 @@ export class GamePage {
   popupTitle: string = '';
   popupMessage: string = '';
   popupType: 'menang' | 'kalah' | null = null;
-
+  private backButtonSub!: Subscription;
+  undoQuota: number = 3;
+  notifMessage: string = '';
+  showNotif: boolean = false;
+  notifType: 'success' | 'warning' | 'danger' = 'success';
+  notifTimeout: any;  
+  
   constructor(
+    private platform: Platform,
+    private navCtrl: NavController,
     private alertController: AlertController,
     private route: ActivatedRoute,
     private router: Router) {
@@ -114,6 +125,7 @@ export class GamePage {
     this.popupTitle = 'Game Over';
     this.popupMessage = 'You have made 3 mistakes and lost this game';
     this.showPopup = true;
+    localStorage.removeItem('saved_sudoku_game');
   }
   cekKemenangan() {
     if (this.board.includes(null)) return;
@@ -129,6 +141,7 @@ export class GamePage {
     this.stopTimer();
     this.popupType = 'menang';
     this.popupTitle = 'Victory!';
+    localStorage.removeItem('saved_sudoku_game');
     
     let pesanLengkap = `Final Score: ${this.score}\nAwesome, You Win!`;
     
@@ -178,8 +191,8 @@ export class GamePage {
     });
   }
 
-  undo() {
-    if (this.history.length > 0) {
+  async undo() {
+    if (this.history.length > 0 && this.undoQuota > 0) {
       const masaLalu = this.history.pop();
       
       this.board = [...masaLalu.board];
@@ -189,10 +202,16 @@ export class GamePage {
       this.mistakes = masaLalu.mistakes;
       this.wrongCells = [...masaLalu.wrongCells];
       this.scoredCells = [...masaLalu.scoredCells];
+      this.undoQuota--;
+
+      this.tampilkanNotifikasiCustom(`Undo successful! Remaining: ${this.undoQuota}`, 'warning');
+      
+    } else if (this.undoQuota <= 0) {
+      this.tampilkanNotifikasiCustom('No more Undos left!', 'danger');
     }
   }
 
-  cekBonusPenyelesaian(index: number) {
+   async cekBonusPenyelesaian(index: number) {
     let row = Math.floor(index / 9);
     let col = index % 9;
     let blockRow = Math.floor(row / 3) * 3;
@@ -213,12 +232,26 @@ export class GamePage {
     }
 
     let totalBonus = 0;
-    if (isRowComplete) totalBonus += (100 * this.multiplier);
-    if (isColComplete) totalBonus += (100 * this.multiplier);
-    if (isBlockComplete) totalBonus += (100 * this.multiplier);
+    let teksPencapaian = [];
+    if (isRowComplete) {
+      totalBonus += (100 * this.multiplier);
+      teksPencapaian.push('Row');
+    }
+    if (isColComplete) {
+      totalBonus += (100 * this.multiplier);
+      teksPencapaian.push('Column');
+    }
+    if (isBlockComplete) {
+      totalBonus += (100 * this.multiplier);
+      teksPencapaian.push('Block');
+    }
 
     if (totalBonus > 0) {
       this.score += totalBonus;
+
+      const pesan = `${teksPencapaian.join(' & ')} Cleared +${totalBonus} Points`;
+
+      this.tampilkanNotifikasiCustom(pesan, 'success');
     }
   }
 
@@ -315,7 +348,33 @@ export class GamePage {
   }
 
   buatSoal(kesulitan: string) {
-    this.stopTimer(); 
+
+    const dataLama = localStorage.getItem('saved_sudoku_game');
+
+    if (dataLama) {
+      const game = JSON.parse(dataLama);
+      if (game.currentDifficulty === kesulitan) {
+        this.board = game.board;
+        this.initialBoard = game.initialBoard;
+        this.solutionBoard = game.solutionBoard;
+        this.mistakes = game.mistakes;
+        this.score = game.score;
+        this.timeElapsed = game.timeElapsed;
+        this.currentDifficulty = game.currentDifficulty;
+        this.notes = game.notes;
+        this.history = game.history;
+        this.scoredCells = game.scoredCells;
+        this.wrongCells = game.wrongCells;
+        
+        this.displayTime = this.formatTime(this.timeElapsed);
+        this.startTimer();
+
+        localStorage.removeItem('saved_sudoku_game');
+        return;
+      }
+    }
+    this.stopTimer();
+    this.undoQuota =3; 
     this.timeElapsed = 0;
     this.displayTime = '00:00';
     this.mistakes = 0;
@@ -324,6 +383,8 @@ export class GamePage {
     this.wrongCells = [];
     this.selectedIndex = null;
     this.history = [];
+    this.popupType = null;
+    this.showPopup = false;
     
     this.notes = new Array(81).fill(null).map(() => []);
 
@@ -368,5 +429,51 @@ export class GamePage {
   }
   trackByIndex(index: number, item: any): number {
     return index;
+  }
+  tampilkanNotifikasiCustom(pesan: string, tipe: 'success' | 'warning' | 'danger') {
+    this.notifMessage = pesan;
+    this.notifType = tipe;
+    this.showNotif = true;
+
+    if (this.notifTimeout) {
+      clearTimeout(this.notifTimeout);
+    }
+
+    this.notifTimeout = setTimeout(() => {
+      this.showNotif = false;
+    }, 2000);
+  }
+  simpanProgresKeLokal() {
+    const dataGame = {
+      board: this.board,
+      initialBoard: this.initialBoard,
+      solutionBoard: this.solutionBoard,
+      mistakes: this.mistakes,
+      score: this.score,
+      timeElapsed: this.timeElapsed,
+      currentDifficulty: this.currentDifficulty,
+      notes: this.notes,
+      history: this.history,
+      scoredCells: this.scoredCells,
+      wrongCells: this.wrongCells
+    };
+    
+    localStorage.setItem('saved_sudoku_game', JSON.stringify(dataGame));
+  }
+
+  ionViewDidEnter() {
+    
+    this.backButtonSub = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.navCtrl.navigateRoot('/home');
+    })
+  }
+  ionViewWillLeave() {
+    this.stopTimer();
+    if (this.mistakes < this.maxMistakes && this.popupType === null){
+      this.simpanProgresKeLokal
+    }
+    if (this.backButtonSub) {
+      this.backButtonSub.unsubscribe();
+    }
   }
 }

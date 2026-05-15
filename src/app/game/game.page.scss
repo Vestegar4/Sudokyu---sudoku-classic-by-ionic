@@ -56,6 +56,10 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
     font-size: 1.6rem; 
     font-weight: 900; 
     letter-spacing: 3px; 
@@ -158,14 +162,17 @@
 .action-row { display: flex; justify-content: center; }
 
 .minimal-action-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: transparent;
   color: var(--c-magenta);
   border: none;
-  font-size: 1rem;
   letter-spacing: 2px;
   font-weight: 800;
-  padding: 15px 30px;
   transition: opacity 0.2s;
+  padding: 10px 15px;
+  font-size: 1rem;
 }
 
 .minimal-action-btn:active { opacity: 0.5; }
@@ -202,11 +209,6 @@
   opacity: 0.3;
   cursor: not-allowed;
   transform: none !important;
-}
-
-.minimal-action-btn {
-  padding: 10px 15px; 
-  font-size: 0.9rem;
 }
 
 .custom-modal-overlay {
@@ -296,6 +298,48 @@
 
 .btn-secondary:active {
   opacity: 0.5;
+}
+.custom-notif {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 30px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-50px);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  padding: 12px 24px;
+  border-radius: 15px;
+  border: 2px solid var(--c-slate);
+  box-shadow: 0 4px 0 rgba(52, 77, 119, 0.15);
+  
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+
+  &.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  &.success { 
+    background-color: var(--c-green); 
+    color: #FFFFFF; 
+  }
+  &.warning { 
+    background-color: var(--c-yellow); 
+    color: var(--c-ink); 
+  }
+  &.danger { 
+    background-color: var(--c-magenta); 
+    color: #FFFFFF; 
+  }
+}
+.btn-undo {
+  gap: 6px; 
 }
 
 @keyframes fadeIn {
